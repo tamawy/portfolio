@@ -103,6 +103,23 @@ body {
     transition: 0.3s;
 }
 
+.nav-socials {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 1.5rem;
+}
+
+.nav-socials a {
+    color: #2563eb;
+    font-size: 1.3rem;
+    transition: color 0.2s;
+}
+
+.nav-socials a:hover {
+    color: #1d4ed8;
+}
+
 /* Hero Section */
 .hero {
     min-height: 100vh;
