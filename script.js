@@ -293,4 +293,12 @@ style.textContent = `
         transition: opacity 0.5s ease;
     }
 `;
-document.head.appendChild(style); 
+document.head.appendChild(style);
+
+// Back to top button functionality
+const backToTopBtn = document.getElementById('backToTopBtn');
+if (backToTopBtn) {
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+} 
