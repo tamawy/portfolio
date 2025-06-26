@@ -301,4 +301,36 @@ if (backToTopBtn) {
     backToTopBtn.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+}
+
+// Dark mode toggle functionality (floating button)
+const darkModeToggleFloating = document.getElementById('darkModeToggleFloating');
+
+function setDarkMode(enabled) {
+    if (enabled) {
+        document.body.classList.add('dark-mode');
+        if (darkModeToggleFloating) darkModeToggleFloating.textContent = '☀️';
+        localStorage.setItem('darkMode', 'enabled');
+    } else {
+        document.body.classList.remove('dark-mode');
+        if (darkModeToggleFloating) darkModeToggleFloating.textContent = '🌙';
+        localStorage.setItem('darkMode', 'disabled');
+    }
+}
+
+function toggleDarkMode() {
+    const enabled = !document.body.classList.contains('dark-mode');
+    setDarkMode(enabled);
+}
+
+if (darkModeToggleFloating) {
+    darkModeToggleFloating.addEventListener('click', toggleDarkMode);
+}
+
+// On page load, apply saved preference or system preference
+const savedMode = localStorage.getItem('darkMode');
+if (savedMode === 'enabled' || (!savedMode && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    setDarkMode(true);
+} else {
+    setDarkMode(false);
 } 
