@@ -1,1312 +1,1456 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Backend Bootcamp - ASP.NET Core | Master Full-Stack Development</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Backend Bootcamp - ASP.NET Core</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/logo-dark.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/logo-dark.png" />
+    <link rel="apple-touch-icon" href="imgs/logo-dark.png" />
+    <link rel="shortcut icon" href="imgs/logo-light.png" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        :root {
-            --primary-blue: #2563eb;
-            --primary-blue-dark: #1e40af;
-            --primary-blue-light: #3b82f6;
-            --text-dark: #1f2937;
-            --text-light: #6b7280;
-            --bg-white: #ffffff;
-            --bg-light: #f9fafb;
-            --border-color: #e5e7eb;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
-            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
+      :root {
+        --primary-blue: #2563eb;
+        --primary-blue-dark: #1e40af;
+        --primary-blue-light: #3b82f6;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+        --bg-white: #ffffff;
+        --bg-light: #f9fafb;
+        --border-color: #e5e7eb;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+        --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark);
-            background-color: var(--bg-white);
-        }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        color: var(--text-dark);
+        background-color: var(--bg-white);
+      }
 
-        /* Header */
-        header {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1.25rem 0;
-            box-shadow: var(--shadow-sm);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: box-shadow 0.3s ease;
-        }
+      /* Header */
+      header {
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1.25rem 0;
+        box-shadow: var(--shadow-sm);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        transition: box-shadow 0.3s ease;
+      }
 
-        header:hover {
-            box-shadow: var(--shadow-md);
-        }
+      header:hover {
+        box-shadow: var(--shadow-md);
+      }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary-blue);
-        }
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--primary-blue);
+      }
 
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
-            color: white;
-            padding: 5rem 1rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
+      /* Hero Section */
+      .hero {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue) 0%,
+          var(--primary-blue-dark) 100%
+        );
+        color: white;
+        padding: 5rem 1rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-        }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at 20% 50%,
+            rgba(255, 255, 255, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(255, 255, 255, 0.1) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+      }
 
-        .hero .container {
-            position: relative;
-            z-index: 1;
-        }
+      .hero .container {
+        position: relative;
+        z-index: 1;
+      }
 
+      .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        line-height: 1.2;
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      .hero .subtitle {
+        font-size: 1.25rem;
+        margin-bottom: 2.5rem;
+        opacity: 0.95;
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .btn-primary {
+        display: inline-block;
+        background-color: white;
+        color: var(--primary-blue);
+        padding: 1rem 2.5rem;
+        font-size: 1.125rem;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        border: none;
+        box-shadow: var(--shadow-md);
+        animation: fadeInUp 1s ease-out;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+        background-color: #f8f9fa;
+      }
+
+      .btn-primary:active {
+        transform: translateY(-1px);
+      }
+
+      /* Main Content */
+      main {
+        padding: 0;
+      }
+
+      section {
+        padding: 5rem 1rem;
+      }
+
+      .section-title {
+        font-size: 2rem;
+        text-align: center;
+        margin-bottom: 3.5rem;
+        color: var(--text-dark);
+        font-weight: 700;
+        position: relative;
+        display: block;
+      }
+
+      .section-title::after {
+        content: "";
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-blue),
+          var(--primary-blue-light)
+        );
+        border-radius: 2px;
+      }
+
+      /* Motivation Section */
+      .motivation {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue) 0%,
+          var(--primary-blue-dark) 100%
+        );
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .motivation::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+          circle at 50% 50%,
+          rgba(255, 255, 255, 0.1) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      .motivation .container {
+        position: relative;
+        z-index: 1;
+      }
+
+      .motivation-content {
+        max-width: 900px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .motivation-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .motivation h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+
+      .motivation-highlight {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.95);
+      }
+
+      .motivation p {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+      }
+
+      .mentoring-features {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-top: 3rem;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .mentoring-feature {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-align: left;
+        transition: all 0.3s ease;
+      }
+
+      .mentoring-feature:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-5px);
+      }
+
+      .mentoring-feature strong {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 1.125rem;
+      }
+
+      .mentoring-feature p {
+        margin: 0;
+        font-size: 1rem;
+        opacity: 0.9;
+      }
+
+      /* Course Levels Section */
+      .course-levels {
+        background-color: var(--bg-light);
+      }
+
+      .levels-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .level-card {
+        background-color: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+        border-left: 5px solid var(--primary-blue);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .level-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          135deg,
+          rgba(37, 99, 235, 0.02) 0%,
+          transparent 100%
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .level-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-left-color: var(--primary-blue-light);
+      }
+
+      .level-card:hover::before {
+        opacity: 1;
+      }
+
+      .level-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-blue);
+        font-weight: 600;
+      }
+
+      .level-card p {
+        color: var(--text-light);
+        margin-bottom: 1rem;
+        line-height: 1.7;
+      }
+
+      .level-card ul {
+        list-style: none;
+        margin-top: 1rem;
+      }
+
+      .level-card ul li {
+        padding: 0.5rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+      }
+
+      .level-card ul li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--primary-blue);
+        font-weight: bold;
+        font-size: 1rem;
+      }
+
+      /* What You Will Learn Section */
+      .learn-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .learn-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.25rem;
+        background-color: var(--bg-light);
+        padding: 1.5rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+      }
+
+      .learn-item:hover {
+        background-color: white;
+        box-shadow: var(--shadow-md);
+        transform: translateX(5px);
+      }
+
+      .learn-item::before {
+        content: "✓";
+        color: white;
+        background: var(--primary-blue);
+        font-size: 1.25rem;
+        font-weight: bold;
+        flex-shrink: 0;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-top: 0.25rem;
+      }
+
+      .learn-item strong {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+        font-size: 1.1rem;
+      }
+
+      .learn-item p {
+        color: var(--text-light);
+        margin: 0;
+      }
+
+      /* Extra Skills Section */
+      .extra-skills {
+        background-color: var(--bg-light);
+      }
+
+      .skills-list {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .skills-list ul {
+        list-style: none;
+      }
+
+      .skills-list li {
+        padding: 1.25rem;
+        margin-bottom: 0.75rem;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+      }
+
+      .skills-list li:hover {
+        transform: translateX(5px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-blue);
+        background: linear-gradient(
+          90deg,
+          rgba(37, 99, 235, 0.05) 0%,
+          white 100%
+        );
+      }
+
+      .skills-list li::before {
+        content: "▸";
+        color: var(--primary-blue);
+        font-size: 1.5rem;
+        font-weight: bold;
+        flex-shrink: 0;
+      }
+
+      /* Instructor Section */
+      .instructor {
+        background: linear-gradient(135deg, var(--bg-light) 0%, white 100%);
+      }
+
+      .instructor-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        max-width: 1000px;
+        margin: 0 auto;
+        align-items: center;
+      }
+
+      .instructor-image {
+        text-align: center;
+      }
+
+      .instructor-image img {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: var(--shadow-lg);
+        border: 5px solid white;
+        transition: transform 0.3s ease;
+      }
+
+      .instructor-image img:hover {
+        transform: scale(1.05);
+      }
+
+      .instructor-info h3 {
+        font-size: 2rem;
+        color: var(--primary-blue);
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+      }
+
+      .instructor-info .instructor-title {
+        font-size: 1.25rem;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+      }
+
+      .instructor-info p {
+        color: var(--text-dark);
+        line-height: 1.8;
+        margin-bottom: 1.25rem;
+      }
+
+      .instructor-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .instructor-stat {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+      }
+
+      .instructor-stat:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .instructor-stat h4 {
+        font-size: 2rem;
+        color: var(--primary-blue);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .instructor-stat p {
+        color: var(--text-light);
+        margin: 0;
+        font-size: 0.95rem;
+      }
+
+      .instructor-contact {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .instructor-contact a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary-blue);
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .instructor-contact a:hover {
+        background: var(--primary-blue);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      /* Pricing Section */
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .pricing-card {
+        background-color: white;
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pricing-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-blue),
+          var(--primary-blue-light)
+        );
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+
+      .pricing-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--shadow-xl);
+        border-color: var(--primary-blue);
+      }
+
+      .pricing-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .pricing-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+      }
+
+      .price {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--primary-blue);
+        margin: 1rem 0;
+      }
+
+      .price-detail {
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+      }
+
+      .pricing-features {
+        list-style: none;
+        text-align: left;
+        margin: 1.5rem 0;
+      }
+
+      .pricing-features li {
+        padding: 0.5rem 0;
+        padding-left: 1.5rem;
+        position: relative;
+      }
+
+      .pricing-features li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--primary-blue);
+        font-weight: bold;
+      }
+
+      /* FAQ Section */
+      .faq {
+        background-color: var(--bg-light);
+      }
+
+      .faq-list {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .faq-item {
+        background-color: white;
+        margin-bottom: 1.25rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+      }
+
+      .faq-item:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary-blue);
+      }
+
+      .faq-question {
+        padding: 1.75rem;
+        font-weight: 600;
+        font-size: 1.125rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-dark);
+        transition: color 0.3s ease;
+      }
+
+      .faq-question:hover {
+        color: var(--primary-blue);
+      }
+
+      .faq-answer {
+        padding: 0 1.75rem 1.75rem 1.75rem;
+        color: var(--text-light);
+        line-height: 1.7;
+      }
+
+      /* Policy Sections */
+      .policy {
+        background-color: var(--bg-light);
+      }
+
+      .policy-content {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+      }
+
+      .policy-content p {
+        color: var(--text-dark);
+        line-height: 1.8;
+        margin-bottom: 1rem;
+        font-size: 1.05rem;
+      }
+
+      .policy-content p:last-child {
+        margin-bottom: 0;
+      }
+
+      /* Final CTA Section */
+      .final-cta {
+        background: linear-gradient(
+          135deg,
+          var(--primary-blue) 0%,
+          var(--primary-blue-dark) 100%
+        );
+        color: white;
+        text-align: center;
+        padding: 5rem 1rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .final-cta::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at 30% 50%,
+            rgba(255, 255, 255, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 70% 80%,
+            rgba(255, 255, 255, 0.1) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+      }
+
+      .final-cta .container {
+        position: relative;
+        z-index: 1;
+      }
+
+      .final-cta h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      .final-cta p {
+        font-size: 1.125rem;
+        margin-bottom: 2.5rem;
+        opacity: 0.95;
+      }
+
+      .btn-white {
+        background-color: white;
+        color: var(--primary-blue);
+      }
+
+      /* Footer */
+      footer {
+        background-color: var(--text-dark);
+        color: white;
+        text-align: center;
+        padding: 2.5rem 1rem;
+      }
+
+      footer p {
+        opacity: 0.9;
+      }
+
+      /* Responsive Design */
+      @media (min-width: 640px) {
         .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            line-height: 1.2;
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .hero .subtitle {
-            font-size: 1.25rem;
-            margin-bottom: 2.5rem;
-            opacity: 0.95;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .btn-primary {
-            display: inline-block;
-            background-color: white;
-            color: var(--primary-blue);
-            padding: 1rem 2.5rem;
-            font-size: 1.125rem;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            border: none;
-            box-shadow: var(--shadow-md);
-            animation: fadeInUp 1s ease-out;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
-            background-color: #f8f9fa;
-        }
-
-        .btn-primary:active {
-            transform: translateY(-1px);
-        }
-
-        /* Main Content */
-        main {
-            padding: 0;
-        }
-
-        section {
-            padding: 5rem 1rem;
+          font-size: 3rem;
         }
 
         .section-title {
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 3.5rem;
-            color: var(--text-dark);
-            font-weight: 700;
-            position: relative;
-            display: block;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-light));
-            border-radius: 2px;
-        }
-
-        /* Motivation Section */
-        .motivation {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .motivation::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .motivation .container {
-            position: relative;
-            z-index: 1;
-        }
-
-        .motivation-content {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .motivation-icon {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
+          font-size: 2.5rem;
         }
 
         .motivation h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
+          font-size: 3rem;
         }
 
         .motivation-highlight {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.95);
-        }
-
-        .motivation p {
-            font-size: 1.125rem;
-            line-height: 1.8;
-            margin-bottom: 2rem;
-            opacity: 0.95;
+          font-size: 1.75rem;
         }
 
         .mentoring-features {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            margin-top: 3rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .mentoring-feature {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: left;
-            transition: all 0.3s ease;
-        }
-
-        .mentoring-feature:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-5px);
-        }
-
-        .mentoring-feature strong {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 1.125rem;
-        }
-
-        .mentoring-feature p {
-            margin: 0;
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
-        /* Course Levels Section */
-        .course-levels {
-            background-color: var(--bg-light);
+          grid-template-columns: repeat(2, 1fr);
         }
 
         .levels-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            max-width: 800px;
-            margin: 0 auto;
+          grid-template-columns: repeat(2, 1fr);
         }
 
-        .level-card {
-            background-color: white;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
-            border-left: 5px solid var(--primary-blue);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .level-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(37, 99, 235, 0.02) 0%, transparent 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .level-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-            border-left-color: var(--primary-blue-light);
-        }
-
-        .level-card:hover::before {
-            opacity: 1;
-        }
-
-        .level-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--primary-blue);
-            font-weight: 600;
-        }
-
-        .level-card p {
-            color: var(--text-light);
-            margin-bottom: 1rem;
-            line-height: 1.7;
-        }
-
-        .level-card ul {
-            list-style: none;
-            margin-top: 1rem;
-        }
-
-        .level-card ul li {
-            padding: 0.5rem 0;
-            padding-left: 1.5rem;
-            position: relative;
-            color: var(--text-dark);
-            font-size: 0.95rem;
-        }
-
-        .level-card ul li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: var(--primary-blue);
-            font-weight: bold;
-            font-size: 1rem;
-        }
-
-        /* What You Will Learn Section */
         .learn-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .learn-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1.25rem;
-            background-color: var(--bg-light);
-            padding: 1.5rem;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .learn-item:hover {
-            background-color: white;
-            box-shadow: var(--shadow-md);
-            transform: translateX(5px);
-        }
-
-        .learn-item::before {
-            content: "✓";
-            color: white;
-            background: var(--primary-blue);
-            font-size: 1.25rem;
-            font-weight: bold;
-            flex-shrink: 0;
-            width: 2rem;
-            height: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            margin-top: 0.25rem;
-        }
-
-        .learn-item strong {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-            font-size: 1.1rem;
-        }
-
-        .learn-item p {
-            color: var(--text-light);
-            margin: 0;
-        }
-
-        /* Extra Skills Section */
-        .extra-skills {
-            background-color: var(--bg-light);
-        }
-
-        .skills-list {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .skills-list ul {
-            list-style: none;
-        }
-
-        .skills-list li {
-            padding: 1.25rem;
-            margin-bottom: 0.75rem;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-
-        .skills-list li:hover {
-            transform: translateX(5px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-blue);
-            background: linear-gradient(90deg, rgba(37, 99, 235, 0.05) 0%, white 100%);
-        }
-
-        .skills-list li::before {
-            content: "▸";
-            color: var(--primary-blue);
-            font-size: 1.5rem;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        /* Instructor Section */
-        .instructor {
-            background: linear-gradient(135deg, var(--bg-light) 0%, white 100%);
+          grid-template-columns: repeat(2, 1fr);
         }
 
         .instructor-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 3rem;
-            max-width: 1000px;
-            margin: 0 auto;
-            align-items: center;
+          grid-template-columns: 250px 1fr;
         }
 
         .instructor-image {
-            text-align: center;
-        }
-
-        .instructor-image img {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            object-fit: cover;
-            box-shadow: var(--shadow-lg);
-            border: 5px solid white;
-            transition: transform 0.3s ease;
-        }
-
-        .instructor-image img:hover {
-            transform: scale(1.05);
-        }
-
-        .instructor-info h3 {
-            font-size: 2rem;
-            color: var(--primary-blue);
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
-
-        .instructor-info .instructor-title {
-            font-size: 1.25rem;
-            color: var(--text-light);
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-        }
-
-        .instructor-info p {
-            color: var(--text-dark);
-            line-height: 1.8;
-            margin-bottom: 1.25rem;
+          text-align: left;
         }
 
         .instructor-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-top: 2rem;
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (min-width: 768px) {
+        .hero {
+          padding: 6rem 1rem;
         }
 
-        .instructor-stat {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
+        .hero h1 {
+          font-size: 3.5rem;
         }
 
-        .instructor-stat:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
+        .motivation h2 {
+          font-size: 3.5rem;
         }
 
-        .instructor-stat h4 {
-            font-size: 2rem;
-            color: var(--primary-blue);
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+        .motivation-icon {
+          font-size: 5rem;
         }
 
-        .instructor-stat p {
-            color: var(--text-light);
-            margin: 0;
-            font-size: 0.95rem;
-        }
-
-        .instructor-contact {
-            display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .instructor-contact a {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary-blue);
-            text-decoration: none;
-            padding: 0.75rem 1.5rem;
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .instructor-contact a:hover {
-            background: var(--primary-blue);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        /* Pricing Section */
         .pricing-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            max-width: 1100px;
-            margin: 0 auto;
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .hero h1 {
+          font-size: 4rem;
         }
 
-        .pricing-card {
-            background-color: white;
-            border: 2px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2.5rem 2rem;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+        .levels-grid {
+          grid-template-columns: repeat(3, 1fr);
         }
 
-        .pricing-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-light));
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
+        .learn-grid {
+          grid-template-columns: repeat(3, 1fr);
         }
 
-        .pricing-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: var(--shadow-xl);
-            border-color: var(--primary-blue);
+        .pricing-grid {
+          grid-template-columns: repeat(3, 1fr);
         }
 
-        .pricing-card:hover::before {
-            transform: scaleX(1);
+        .instructor-content {
+          grid-template-columns: 300px 1fr;
+          gap: 4rem;
         }
 
-        .pricing-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
+        .instructor-image img {
+          width: 250px;
+          height: 250px;
         }
+      }
 
-        .price {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary-blue);
-            margin: 1rem 0;
+      @media (min-width: 1200px) {
+        .pricing-grid {
+          grid-template-columns: repeat(5, 1fr);
         }
-
-        .price-detail {
-            color: var(--text-light);
-            margin-bottom: 1.5rem;
-        }
-
-        .pricing-features {
-            list-style: none;
-            text-align: left;
-            margin: 1.5rem 0;
-        }
-
-        .pricing-features li {
-            padding: 0.5rem 0;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-
-        .pricing-features li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: var(--primary-blue);
-            font-weight: bold;
-        }
-
-        /* FAQ Section */
-        .faq {
-            background-color: var(--bg-light);
-        }
-
-        .faq-list {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            background-color: white;
-            margin-bottom: 1.25rem;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-
-        .faq-item:hover {
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-blue);
-        }
-
-        .faq-question {
-            padding: 1.75rem;
-            font-weight: 600;
-            font-size: 1.125rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-dark);
-            transition: color 0.3s ease;
-        }
-
-        .faq-question:hover {
-            color: var(--primary-blue);
-        }
-
-        .faq-answer {
-            padding: 0 1.75rem 1.75rem 1.75rem;
-            color: var(--text-light);
-            line-height: 1.7;
-        }
-
-        /* Policy Sections */
-        .policy {
-            background-color: var(--bg-light);
-        }
-
-        .policy-content {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
-        }
-
-        .policy-content p {
-            color: var(--text-dark);
-            line-height: 1.8;
-            margin-bottom: 1rem;
-            font-size: 1.05rem;
-        }
-
-        .policy-content p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Final CTA Section */
-        .final-cta {
-            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
-            color: white;
-            text-align: center;
-            padding: 5rem 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .final-cta::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-        }
-
-        .final-cta .container {
-            position: relative;
-            z-index: 1;
-        }
-
-        .final-cta h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .final-cta p {
-            font-size: 1.125rem;
-            margin-bottom: 2.5rem;
-            opacity: 0.95;
-        }
-
-        .btn-white {
-            background-color: white;
-            color: var(--primary-blue);
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--text-dark);
-            color: white;
-            text-align: center;
-            padding: 2.5rem 1rem;
-        }
-
-        footer p {
-            opacity: 0.9;
-        }
-
-        /* Responsive Design */
-        @media (min-width: 640px) {
-            .hero h1 {
-                font-size: 3rem;
-            }
-
-            .section-title {
-                font-size: 2.5rem;
-            }
-
-            .motivation h2 {
-                font-size: 3rem;
-            }
-
-            .motivation-highlight {
-                font-size: 1.75rem;
-            }
-
-            .mentoring-features {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .levels-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .learn-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .instructor-content {
-                grid-template-columns: 250px 1fr;
-            }
-
-            .instructor-image {
-                text-align: left;
-            }
-
-            .instructor-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (min-width: 768px) {
-            .hero {
-                padding: 6rem 1rem;
-            }
-
-            .hero h1 {
-                font-size: 3.5rem;
-            }
-
-            .motivation h2 {
-                font-size: 3.5rem;
-            }
-
-            .motivation-icon {
-                font-size: 5rem;
-            }
-
-            .pricing-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .hero h1 {
-                font-size: 4rem;
-            }
-
-            .levels-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .learn-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .pricing-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .instructor-content {
-                grid-template-columns: 300px 1fr;
-                gap: 4rem;
-            }
-
-            .instructor-image img {
-                width: 250px;
-                height: 250px;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .pricing-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <nav class="container">
-            <div class="logo">Backend Bootcamp</div>
-        </nav>
+      <nav class="container">
+        <div class="logo">Backend Bootcamp</div>
+      </nav>
     </header>
 
     <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <h1>Become a Real Backend Developer with ASP.NET Core</h1>
-                <p class="subtitle">Learn C#, SQL, MVC & Web API in a structured path — from zero to building real backend developer.</p>
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="container">
+          <h1>Become a Real Backend Developer with ASP.NET Core</h1>
+          <p class="subtitle">
+            Learn C#, SQL, MVC & Web API in a structured path — from zero to
+            building real backend developer.
+          </p>
 
-        <a href="#enroll" class="btn-primary">Enroll Now</a>
-            </div>
-        </section>
-
-        <!-- Motivation Section -->
-        <section class="motivation">
-            <div class="container">
-                <div class="motivation-content">
-                    <div class="motivation-icon">🎯</div>
-                    <h2>You're Never Alone on Your Learning Journey</h2>
-                    <p class="motivation-highlight">Personal Mentoring Throughout Your Course</p>
-                    <p>
-                        Learning backend development can be challenging, but you don't have to face it alone. 
-                        We provide continuous mentoring and support to help you overcome any obstacles you encounter.
-                    </p>
-                    <div class="mentoring-features">
-                        <div class="mentoring-feature">
-                            <strong>💬 Direct Access to Your Instructor</strong>
-                            <p>Get personalized help whenever you're stuck or need clarification on any topic.</p>
-                        </div>
-                        <div class="mentoring-feature">
-                            <strong>🔧 Problem-Solving Support</strong>
-                            <p>Struggling with a concept or debugging an issue? We're here to guide you through it step by step.</p>
-                        </div>
-                        <div class="mentoring-feature">
-                            <strong>📚 Code Reviews & Feedback</strong>
-                            <p>Receive constructive feedback on your code to help you write better, cleaner, and more efficient solutions.</p>
-                        </div>
-                        <div class="mentoring-feature">
-                            <strong>🎓 Career Guidance</strong>
-                            <p>Beyond just coding, get advice on best practices, industry standards, and how to prepare for your backend development career.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Course Levels Section -->
-        <section class="course-levels" id="levels">
-            <div class="container">
-                <h2 class="section-title">Course Levels</h2>
-                <div class="levels-grid">
-                    <div class="level-card">
-                        <h3>Level 1 — C# Fundamentals</h3>
-                        <p>Learn the foundations of C# programming: variables, data types, conditions, loops, collections, functions, and how to think in code.
-                            Target: complete beginners.</p>
-                            <ul>
-                                <li>Introduction to .NET & Why C#</li>
-                                <li>Variables, Data Types & Memory</li>
-                                <li>Conditions, Loops & Flow Control</li>
-                                <li>Functions, Methods & Parameters</li>
-                                <li>Collections (List / Dictionary / Array)</li>
-                                <li>Error Handling & Debugging Basics</li>
-                                <li>Basic Problem Solving Challenges</li>
-                             </ul>
-                             
-                    </div>
-                    <div class="level-card">
-                        <h3>Level 2 — OOP & Advanced C#</h3>
-                        <p>Object-Oriented Programming: classes, objects, inheritance, polymorphism, interfaces, SOLID basics, and clean code principles to write maintainable software.</p>
-                        <ul>
-                            <li>OOP Mindset — Thinking in Objects</li>
-                            <li>Classes, Objects & Encapsulation</li>
-                            <li>Inheritance, Polymorphism & Interfaces</li>
-                            <li>Abstract Classes vs Interfaces</li>
-                            <li>SOLID Principles (Intro)</li>
-                            <li>Generics Basics</li>
-                            <li>Clean Code & Naming Standards</li>
-                         </ul>
-                         
-                    </div>
-                    <div class="level-card">
-                        <h3>Level 3 — SQL Server + LINQ + EF Core Basics</h3>
-                        <p>Database design, SQL queries, joins, stored procedures, LINQ, and Entity Framework Core (code-first, migrations, CRUD operations).</p>
-                        <ul>
-                            <li>Database Design + ERD</li>
-                            <li>SQL SELECT / INSERT / UPDATE / DELETE</li>
-                            <li>Joins, Subqueries & Aggregations</li>
-                            <li>Stored Procedures Fundamentals</li>
-                            <li>LINQ Filtering & Projection</li>
-                            <li>EF Core Code-First + Migrations</li>
-                            <li>CRUD with Repository Pattern (intro)</li>
-                         </ul>
-                         
-                    </div>
-                    <div class="level-card">
-                        <h3>Level 4 — ASP.NET Core MVC</h3>
-                        <p>MVC architecture, controllers, Razor views, validation, identity roles, file uploads, pagination, filtering, and the main differences between .NET Framework vs .NET Core.</p>
-                        <ul>
-                            <li>.NET Framework vs .NET Core Differences</li>
-                            <li>MVC Architecture</li>
-                            <li>Controllers, Views & Models</li>
-                            <li>Basics of HTML, Css, Js, jQuery and Ajax</li>
-                            <li>Razor Views + Validation</li>
-                            <li>Identity Authentication & Roles</li>
-                            <li>File Uploads</li>
-                            <li>Pagination / Filtering / Sorting</li>
-                         </ul>
-                         
-                    </div>
-                    <div class="level-card">
-                        <h3>Level 5 — ASP.NET Core Web API + JWT Authentication</h3>
-                        <p>REST API development, DTOs, AutoMapper, middleware pipeline, JWT authentication & refresh tokens, API versioning, Swagger documentation, and building a real production-grade backend API.</p>
-                        <ul>
-                            <li>REST API Fundamentals</li>
-                            <li>DTOs + AutoMapper</li>
-                            <li>Routing + API Versioning</li>
-                            <li>Middleware Pipeline</li>
-                            <li>JWT Authentication (Register / Login)</li>
-                            <li>Role-based Authorization</li>
-                            <li>API Documentation with Swagger</li>
-                         </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- What You Will Learn Section -->
-        <section class="what-you-learn">
-            <div class="container">
-                <h2 class="section-title">What You Will Learn</h2>
-                <div class="learn-grid">
-                    <div class="learn-item">
-                        <div>
-                            <strong>ASP.NET Core Framework</strong>
-                            <p>Master the latest .NET platform for building modern web applications</p>
-                        </div>
-                    </div>
-                    <div class="learn-item">
-                        <div>
-                            <strong>C# Programming</strong>
-                            <p>Learn C# syntax, features, and best practices for backend development</p>
-                        </div>
-                    </div>
-                    <div class="learn-item">
-                        <div>
-                            <strong>RESTful API Development</strong>
-                            <p>Build robust APIs that integrate with frontend applications and mobile apps</p>
-                        </div>
-                    </div>
-                    <div class="learn-item">
-                        <div>
-                            <strong>Database Integration</strong>
-                            <p>Work with Entity Framework Core and SQL Server for data persistence</p>
-                        </div>
-                    </div>
-                    <div class="learn-item">
-                        <div>
-                            <strong>Authentication & Authorization</strong>
-                            <p>Implement secure user management and role-based access control</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Instructor Section -->
-        <section class="instructor" id="instructor">
-            <div class="container">
-                <h2 class="section-title">Meet Your Instructor</h2>
-                <div class="instructor-content">
-                    <div class="instructor-image">
-                        <img src="imgs/my-profile-picture.jpg" alt="Ibrahim Eltamawy">
-                    </div>
-                    <div class="instructor-info">
-                        <h3>Ibrahim Eltamawy</h3>
-                        <p class="instructor-title">Back-End Developer & Instructor</p>
-                        <p>
-                            Specialized in ASP.NET MVC and ASP.NET Web API with over 3 years of experience. 
-                            I've contributed to "Trips", a web application simplifying hotel and flight reservations, 
-                            and played a key role in developing a CMS and integrating websites with WhatsApp (from Meta) 
-                            for seamless communication.
-                        </p>
-                        <p>
-                            I also worked as a Java Instructor, explaining basic programming concepts and OOP using Java. 
-                            I thrive in collaborative environments and stay updated with the latest tech trends. 
-                            With a passion for teaching and real-world experience, I'm here to guide you through 
-                            your backend development journey.
-                        </p>
-                        <div class="instructor-stats">
-                            <div class="instructor-stat">
-                                <h4>3+</h4>
-                                <p>Years Experience</p>
-                            </div>
-                            <div class="instructor-stat">
-                                <h4>7+</h4>
-                                <p>Real Projects Done</p>
-                            </div>
-
-                        </div>
-                        <div class="instructor-contact">
-                            <a href="mailto:ibrahim.elsayed.26498@gmail.com.com">
-                                <span>📧</span> Email
-                            </a>
-                            <a href="https://wa.me/201033939718" target="_blank">
-                                <span>📱</span> WhatsApp
-                            </a>
-                            <a href="https://www.linkedin.com/in/ibrahim-tamawy/" target="_blank">
-                                <span>🔗</span> LinkedIn
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Extra Skills Section -->
-        <section class="extra-skills">
-            <div class="container">
-                <h2 class="section-title">Extra Skills You Will Learn Along the Way</h2>
-                <div class="skills-list">
-                    <ul>
-                        <li>Git & GitHub basics (clone, commit, push, branches)</li>
-                        <li>Software engineering mindset (clean code, naming, folder structure)</li>
-                        <li>Debugging techniques (breakpoints / watch variables / call stack)</li>
-                        <li>API Testing with Postman</li>
-                        <li>Using VS Code / Visual Studio efficiently</li>
-                        <li>How to read documentation (Microsoft Learn, NuGet)</li>
-                        <li>How to work in a real team (pull requests, code reviews — intro only)</li>
-                        <li>How to deal with libraries & APIs</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Pricing Section -->
-        <section class="pricing" id="pricing">
-    <div class="container">
-        <h2 class="section-title">Pricing (Per Student)</h2>
-        <div class="pricing-grid">
-
-            <div class="pricing-card">
-                <h3>Level 1</h3>
-                <div class="price">1,400 EGP</div>
-                <p class="price-detail">C# Fundamentals</p>
-                <ul class="pricing-features">
-                    <li>6 weeks duration</li>
-                    <li>2 sessions per week</li>
-                    <li>Concept explanation session</li>
-                    <li>Implementation + Live Q&A session</li>
-                    <li>Certificate of completion</li>
-                </ul>
-                <a href="#enroll" class="btn-primary">Enroll Now</a>
-            </div>
-
-            <div class="pricing-card">
-                <h3>Level 2</h3>
-                <div class="price">1,600 EGP</div>
-                <p class="price-detail">OOP & Advanced C#</p>
-                <ul class="pricing-features">
-                    <li>6 weeks duration</li>
-                    <li>2 sessions per week</li>
-                    <li>Concept explanation session</li>
-                    <li>Implementation + Live Q&A session</li>
-                    <li>Certificate of completion</li>
-                </ul>
-                <a href="#enroll" class="btn-primary">Enroll Now</a>
-            </div>
-
-            <div class="pricing-card">
-                <h3>Level 3</h3>
-                <div class="price">1,800 EGP</div>
-                <p class="price-detail">SQL + EF Core Basics</p>
-                <ul class="pricing-features">
-                    <li>6 weeks duration</li>
-                    <li>2 sessions per week</li>
-                    <li>Concept explanation session</li>
-                    <li>Implementation + Live Q&A session</li>
-                    <li>Certificate of completion</li>
-                </ul>
-                <a href="#enroll" class="btn-primary">Enroll Now</a>
-            </div>
-
-            <div class="pricing-card">
-                <h3>Level 4</h3>
-                <div class="price">2,000 EGP</div>
-                <p class="price-detail">ASP.NET Core MVC</p>
-                <ul class="pricing-features">
-                    <li>8 weeks duration</li>
-                    <li>2 sessions per week</li>
-                    <li>Concept explanation session</li>
-                    <li>Implementation + Live Q&A session</li>
-                    <li>Certificate of completion</li>
-                </ul>
-                <a href="#enroll" class="btn-primary">Enroll Now</a>
-            </div>
-
-            <div class="pricing-card">
-                <h3>Level 5</h3>
-                <div class="price">1,700 EGP</div>
-                <p class="price-detail">ASP.NET Core Web API + JWT</p>
-                <ul class="pricing-features">
-                    <li>6 weeks duration</li>
-                    <li>2 sessions per week</li>
-                    <li>Concept explanation session</li>
-                    <li>Implementation + Live Q&A session</li>
-                    <li>Build a complete Authentication-based API (JWT)</li>
-                    <li>Certificate of completion</li>
-                </ul>
-                <a href="#enroll" class="btn-primary">Enroll Now</a>
-            </div>
-
+          <a href="#enroll" class="btn-primary">Enroll Now</a>
         </div>
-    </div>
-        </section>
+      </section>
 
-
-
-        <!-- FAQ Section -->
-<section class="faq">
-    <div class="container">
-        <h2 class="section-title">Frequently Asked Questions</h2>
-        <div class="faq-list">
-
-            <div class="faq-item">
-                <div class="faq-question">Do I need any previous programming experience?</div>
-                <div class="faq-answer">
-                    No. Level 1 starts from zero. You only need a laptop and commitment. Everything else will be explained step by step.
-                </div>
+      <!-- Motivation Section -->
+      <section class="motivation">
+        <div class="container">
+          <div class="motivation-content">
+            <div class="motivation-icon">🎯</div>
+            <h2>You're Never Alone on Your Learning Journey</h2>
+            <p class="motivation-highlight">
+              Personal Mentoring Throughout Your Course
+            </p>
+            <p>
+              Learning backend development can be challenging, but you don't
+              have to face it alone. We provide continuous mentoring and support
+              to help you overcome any obstacles you encounter.
+            </p>
+            <div class="mentoring-features">
+              <div class="mentoring-feature">
+                <strong>💬 Direct Access to Your Instructor</strong>
+                <p>
+                  Get personalized help whenever you're stuck or need
+                  clarification on any topic.
+                </p>
+              </div>
+              <div class="mentoring-feature">
+                <strong>🔧 Problem-Solving Support</strong>
+                <p>
+                  Struggling with a concept or debugging an issue? We're here to
+                  guide you through it step by step.
+                </p>
+              </div>
+              <div class="mentoring-feature">
+                <strong>📚 Code Reviews & Feedback</strong>
+                <p>
+                  Receive constructive feedback on your code to help you write
+                  better, cleaner, and more efficient solutions.
+                </p>
+              </div>
+              <div class="mentoring-feature">
+                <strong>🎓 Career Guidance</strong>
+                <p>
+                  Beyond just coding, get advice on best practices, industry
+                  standards, and how to prepare for your backend development
+                  career.
+                </p>
+              </div>
             </div>
-
-            <div class="faq-item">
-                <div class="faq-question">Are the sessions live or recorded?</div>
-                <div class="faq-answer">
-                    Sessions are live on Zoom or Google Meet. Each week we have 2 sessions:
-                    one for explaining concepts and one for implementation + live Q&A.
-                    All sessions are recorded and provided for replay.
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">How many students in each group?</div>
-                <div class="faq-answer">
-                    Maximum of 10 students per group. This ensures you get personal attention, feedback, and support.
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">Do I need a powerful laptop?</div>
-                <div class="faq-answer">
-                    Not really. Any normal Windows laptop is fine.
-                    We will install Visual Studio Community and SQL Server.
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">Will I build real projects?</div>
-                <div class="faq-answer">
-                    Yes. Each level has practical implementation, and Level 5 ends with a full production-grade backend project using ASP.NET Core Web API.
-                </div>
-            </div>
-
-            
+          </div>
         </div>
-    </div>
-</section>
+      </section>
 
+      <!-- Course Levels Section -->
+      <section class="course-levels" id="levels">
+        <div class="container">
+          <h2 class="section-title">Course Levels</h2>
+          <div class="levels-grid">
+            <div class="level-card">
+              <h3>Level 1 — C# Fundamentals</h3>
+              <p>
+                Learn the foundations of C# programming: variables, data types,
+                conditions, loops, collections, functions, and how to think in
+                code. Target: complete beginners.
+              </p>
+              <ul>
+                <li>Introduction to .NET & Why C#</li>
+                <li>Variables, Data Types & Memory</li>
+                <li>Conditions, Loops & Flow Control</li>
+                <li>Functions, Methods & Parameters</li>
+                <li>Collections (List / Dictionary / Array)</li>
+                <li>Error Handling & Debugging Basics</li>
+                <li>Basic Problem Solving Challenges</li>
+              </ul>
+            </div>
+            <div class="level-card">
+              <h3>Level 2 — OOP & Advanced C#</h3>
+              <p>
+                Object-Oriented Programming: classes, objects, inheritance,
+                polymorphism, interfaces, SOLID basics, and clean code
+                principles to write maintainable software.
+              </p>
+              <ul>
+                <li>OOP Mindset — Thinking in Objects</li>
+                <li>Classes, Objects & Encapsulation</li>
+                <li>Inheritance, Polymorphism & Interfaces</li>
+                <li>Abstract Classes vs Interfaces</li>
+                <li>SOLID Principles (Intro)</li>
+                <li>Generics Basics</li>
+                <li>Clean Code & Naming Standards</li>
+              </ul>
+            </div>
+            <div class="level-card">
+              <h3>Level 3 — SQL Server + LINQ + EF Core Basics</h3>
+              <p>
+                Database design, SQL queries, joins, stored procedures, LINQ,
+                and Entity Framework Core (code-first, migrations, CRUD
+                operations).
+              </p>
+              <ul>
+                <li>Database Design + ERD</li>
+                <li>SQL SELECT / INSERT / UPDATE / DELETE</li>
+                <li>Joins, Subqueries & Aggregations</li>
+                <li>Stored Procedures Fundamentals</li>
+                <li>LINQ Filtering & Projection</li>
+                <li>EF Core Code-First + Migrations</li>
+                <li>CRUD with Repository Pattern (intro)</li>
+              </ul>
+            </div>
+            <div class="level-card">
+              <h3>Level 4 — ASP.NET Core MVC</h3>
+              <p>
+                MVC architecture, controllers, Razor views, validation, identity
+                roles, file uploads, pagination, filtering, and the main
+                differences between .NET Framework vs .NET Core.
+              </p>
+              <ul>
+                <li>.NET Framework vs .NET Core Differences</li>
+                <li>MVC Architecture</li>
+                <li>Controllers, Views & Models</li>
+                <li>Basics of HTML, Css, Js, jQuery and Ajax</li>
+                <li>Razor Views + Validation</li>
+                <li>Identity Authentication & Roles</li>
+                <li>File Uploads</li>
+                <li>Pagination / Filtering / Sorting</li>
+              </ul>
+            </div>
+            <div class="level-card">
+              <h3>Level 5 — ASP.NET Core Web API + JWT Authentication</h3>
+              <p>
+                REST API development, DTOs, AutoMapper, middleware pipeline, JWT
+                authentication & refresh tokens, API versioning, Swagger
+                documentation, and building a real production-grade backend API.
+              </p>
+              <ul>
+                <li>REST API Fundamentals</li>
+                <li>DTOs + AutoMapper</li>
+                <li>Routing + API Versioning</li>
+                <li>Middleware Pipeline</li>
+                <li>JWT Authentication (Register / Login)</li>
+                <li>Role-based Authorization</li>
+                <li>API Documentation with Swagger</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <!-- Teaching Format Section -->
-        <section class="policy">
-            <div class="container">
-                <h2 class="section-title">Teaching Style & Live Sessions</h2>
-                <div class="policy-content">
-                    <p>• All sessions are conducted LIVE (online) — approx. 45 to 60 minutes per session (may be more).</p>
-                    <p>• Each week has 2 sessions: one session for concept explanation, and one session for implementation + live Q&A.</p>
-                    <p>• All (explanation) live sessions are recorded and made available for replay.</p>
+      <!-- What You Will Learn Section -->
+      <section class="what-you-learn">
+        <div class="container">
+          <h2 class="section-title">What You Will Learn</h2>
+          <div class="learn-grid">
+            <div class="learn-item">
+              <div>
+                <strong>ASP.NET Core Framework</strong>
+                <p>
+                  Master the latest .NET platform for building modern web
+                  applications
+                </p>
+              </div>
+            </div>
+            <div class="learn-item">
+              <div>
+                <strong>C# Programming</strong>
+                <p>
+                  Learn C# syntax, features, and best practices for backend
+                  development
+                </p>
+              </div>
+            </div>
+            <div class="learn-item">
+              <div>
+                <strong>RESTful API Development</strong>
+                <p>
+                  Build robust APIs that integrate with frontend applications
+                  and mobile apps
+                </p>
+              </div>
+            </div>
+            <div class="learn-item">
+              <div>
+                <strong>Database Integration</strong>
+                <p>
+                  Work with Entity Framework Core and SQL Server for data
+                  persistence
+                </p>
+              </div>
+            </div>
+            <div class="learn-item">
+              <div>
+                <strong>Authentication & Authorization</strong>
+                <p>
+                  Implement secure user management and role-based access control
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Instructor Section -->
+      <section class="instructor" id="instructor">
+        <div class="container">
+          <h2 class="section-title">Meet Your Instructor</h2>
+          <div class="instructor-content">
+            <div class="instructor-image">
+              <img src="imgs/my-profile-picture.jpg" alt="Ibrahim Eltamawy" />
+            </div>
+            <div class="instructor-info">
+              <h3>Ibrahim Eltamawy</h3>
+              <p class="instructor-title">Back-End Developer & Instructor</p>
+              <p>
+                Specialized in ASP.NET MVC and ASP.NET Web API with over 3 years
+                of experience. I've contributed to "Trips", a web application
+                simplifying hotel and flight reservations, and played a key role
+                in developing a CMS and integrating websites with WhatsApp (from
+                Meta) for seamless communication.
+              </p>
+              <p>
+                I also worked as a Java Instructor, explaining basic programming
+                concepts and OOP using Java. I thrive in collaborative
+                environments and stay updated with the latest tech trends. With
+                a passion for teaching and real-world experience, I'm here to
+                guide you through your backend development journey.
+              </p>
+              <div class="instructor-stats">
+                <div class="instructor-stat">
+                  <h4>3+</h4>
+                  <p>Years Experience</p>
                 </div>
-            </div>
-        </section>
-        
-        <!-- Attendance Policy Section -->
-        <section class="policy">
-            <div class="container">
-                <h2 class="section-title">Attendance Policy</h2>
-                <div class="policy-content">
-                    <p>• Consistent attendance is required to keep learning progress.</p>
-                    <p>• If a student misses a session, they must watch the recording before attending next session.</p>
-                    <p>• Students can delay to another round only ONCE (based on availability).</p>
-                    <p>• If the student misses 2 sessions in a row without communication — their enrollment may be paused until next round.</p>
+                <div class="instructor-stat">
+                  <h4>7+</h4>
+                  <p>Real Projects Done</p>
                 </div>
+              </div>
+              <div class="instructor-contact">
+                <a href="mailto:ibrahim.elsayed.26498@gmail.com.com">
+                  <span>📧</span> Email
+                </a>
+                <a href="https://wa.me/201033939718" target="_blank">
+                  <span>📱</span> WhatsApp
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/ibrahim-tamawy/"
+                  target="_blank"
+                >
+                  <span>🔗</span> LinkedIn
+                </a>
+              </div>
             </div>
-        </section>
-        <!-- Refund Policy Section -->
-        <section class="policy">
-            <div class="container">
-                <h2 class="section-title">Refund Policy</h2>
-                <div class="policy-content">
-                    <p>• 100% refund is allowed if the student requests a refund BEFORE the first session starts.</p>
-                    <p>• 70% refund is allowed if the request is made AFTER Session 1 and BEFORE Session 2.</p>
-                    <p>• No refund is available once Session 2 has started.</p>
-                    <p>Note: If a student reschedules to another group (Round 2), the same rule applies based on the group's first session date.</p>
-                </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Extra Skills Section -->
+      <section class="extra-skills">
+        <div class="container">
+          <h2 class="section-title">
+            Extra Skills You Will Learn Along the Way
+          </h2>
+          <div class="skills-list">
+            <ul>
+              <li>Git & GitHub basics (clone, commit, push, branches)</li>
+              <li>
+                Software engineering mindset (clean code, naming, folder
+                structure)
+              </li>
+              <li>
+                Debugging techniques (breakpoints / watch variables / call
+                stack)
+              </li>
+              <li>API Testing with Postman</li>
+              <li>Using VS Code / Visual Studio efficiently</li>
+              <li>How to read documentation (Microsoft Learn, NuGet)</li>
+              <li>
+                How to work in a real team (pull requests, code reviews — intro
+                only)
+              </li>
+              <li>How to deal with libraries & APIs</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pricing Section -->
+      <section class="pricing" id="pricing">
+        <div class="container">
+          <h2 class="section-title">Pricing (Per Student)</h2>
+          <div class="pricing-grid">
+            <div class="pricing-card">
+              <h3>Level 1</h3>
+              <div class="price">1,400 EGP</div>
+              <p class="price-detail">C# Fundamentals</p>
+              <ul class="pricing-features">
+                <li>6 weeks duration</li>
+                <li>2 sessions per week</li>
+                <li>Concept explanation session</li>
+                <li>Implementation + Live Q&A session</li>
+                <li>Certificate of completion</li>
+              </ul>
+              <a href="#enroll" class="btn-primary">Enroll Now</a>
             </div>
-        </section>
 
-
-        
-
-        
-
-        <!-- Final CTA Section -->
-        <section class="final-cta" id="enroll">
-            <div class="container">
-                <h2>Ready to Start Your Backend Development Journey?</h2>
-                <p>Join hundreds of students learning ASP.NET Core and building their careers in backend development.</p>
-                <a href="#pricing" class="btn-primary btn-white">View Pricing & Enroll</a>
+            <div class="pricing-card">
+              <h3>Level 2</h3>
+              <div class="price">1,600 EGP</div>
+              <p class="price-detail">OOP & Advanced C#</p>
+              <ul class="pricing-features">
+                <li>6 weeks duration</li>
+                <li>2 sessions per week</li>
+                <li>Concept explanation session</li>
+                <li>Implementation + Live Q&A session</li>
+                <li>Certificate of completion</li>
+              </ul>
+              <a href="#enroll" class="btn-primary">Enroll Now</a>
             </div>
-        </section>
+
+            <div class="pricing-card">
+              <h3>Level 3</h3>
+              <div class="price">1,800 EGP</div>
+              <p class="price-detail">SQL + EF Core Basics</p>
+              <ul class="pricing-features">
+                <li>6 weeks duration</li>
+                <li>2 sessions per week</li>
+                <li>Concept explanation session</li>
+                <li>Implementation + Live Q&A session</li>
+                <li>Certificate of completion</li>
+              </ul>
+              <a href="#enroll" class="btn-primary">Enroll Now</a>
+            </div>
+
+            <div class="pricing-card">
+              <h3>Level 4</h3>
+              <div class="price">2,000 EGP</div>
+              <p class="price-detail">ASP.NET Core MVC</p>
+              <ul class="pricing-features">
+                <li>8 weeks duration</li>
+                <li>2 sessions per week</li>
+                <li>Concept explanation session</li>
+                <li>Implementation + Live Q&A session</li>
+                <li>Certificate of completion</li>
+              </ul>
+              <a href="#enroll" class="btn-primary">Enroll Now</a>
+            </div>
+
+            <div class="pricing-card">
+              <h3>Level 5</h3>
+              <div class="price">1,700 EGP</div>
+              <p class="price-detail">ASP.NET Core Web API + JWT</p>
+              <ul class="pricing-features">
+                <li>6 weeks duration</li>
+                <li>2 sessions per week</li>
+                <li>Concept explanation session</li>
+                <li>Implementation + Live Q&A session</li>
+                <li>Build a complete Authentication-based API (JWT)</li>
+                <li>Certificate of completion</li>
+              </ul>
+              <a href="#enroll" class="btn-primary">Enroll Now</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="faq">
+        <div class="container">
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <div class="faq-list">
+            <div class="faq-item">
+              <div class="faq-question">
+                Do I need any previous programming experience?
+              </div>
+              <div class="faq-answer">
+                No. Level 1 starts from zero. You only need a laptop and
+                commitment. Everything else will be explained step by step.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">Are the sessions live or recorded?</div>
+              <div class="faq-answer">
+                Sessions are live on Zoom or Google Meet. Each week we have 2
+                sessions: one for explaining concepts and one for implementation
+                + live Q&A. All sessions are recorded and provided for replay.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">How many students in each group?</div>
+              <div class="faq-answer">
+                Maximum of 10 students per group. This ensures you get personal
+                attention, feedback, and support.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">Do I need a powerful laptop?</div>
+              <div class="faq-answer">
+                Not really. Any normal Windows laptop is fine. We will install
+                Visual Studio Community and SQL Server.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question">Will I build real projects?</div>
+              <div class="faq-answer">
+                Yes. Each level has practical implementation, and Level 5 ends
+                with a full production-grade backend project using ASP.NET Core
+                Web API.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Teaching Format Section -->
+      <section class="policy">
+        <div class="container">
+          <h2 class="section-title">Teaching Style & Live Sessions</h2>
+          <div class="policy-content">
+            <p>
+              • All sessions are conducted LIVE (online) — approx. 45 to 60
+              minutes per session (may be more).
+            </p>
+            <p>
+              • Each week has 2 sessions: one session for concept explanation,
+              and one session for implementation + live Q&A.
+            </p>
+            <p>
+              • All (explanation) live sessions are recorded and made available
+              for replay.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Attendance Policy Section -->
+      <section class="policy">
+        <div class="container">
+          <h2 class="section-title">Attendance Policy</h2>
+          <div class="policy-content">
+            <p>
+              • Consistent attendance is required to keep learning progress.
+            </p>
+            <p>
+              • If a student misses a session, they must watch the recording
+              before attending next session.
+            </p>
+            <p>
+              • Students can delay to another round only ONCE (based on
+              availability).
+            </p>
+            <p>
+              • If the student misses 2 sessions in a row without communication
+              — their enrollment may be paused until next round.
+            </p>
+          </div>
+        </div>
+      </section>
+      <!-- Refund Policy Section -->
+      <section class="policy">
+        <div class="container">
+          <h2 class="section-title">Refund Policy</h2>
+          <div class="policy-content">
+            <p>
+              • 100% refund is allowed if the student requests a refund BEFORE
+              the first session starts.
+            </p>
+            <p>
+              • 70% refund is allowed if the request is made AFTER Session 1 and
+              BEFORE Session 2.
+            </p>
+            <p>• No refund is available once Session 2 has started.</p>
+            <p>
+              Note: If a student reschedules to another group (Round 2), the
+              same rule applies based on the group's first session date.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Final CTA Section -->
+      <section class="final-cta" id="enroll">
+        <div class="container">
+          <h2>Ready to Start Your Backend Development Journey?</h2>
+          <p>
+            Join hundreds of students learning ASP.NET Core and building their
+            careers in backend development.
+          </p>
+          <a href="#pricing" class="btn-primary btn-white"
+            >View Pricing & Enroll</a
+          >
+        </div>
+      </section>
     </main>
 
     <footer>
-        <div class="container">
-            <p>&copy; 2025 Backend Bootcamp. All rights reserved.</p>
-        </div>
+      <div class="container">
+        <p>&copy; 2025 Backend Bootcamp. All rights reserved.</p>
+      </div>
     </footer>
-</body>
+  </body>
 </html>
-
