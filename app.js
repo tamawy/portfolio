@@ -72,6 +72,91 @@ function escapeHtml(str) {
     .replace(/'/g, "&#039;");
 }
 
+/** True when content looks like HTML (legacy posts) rather than Markdown. */
+function isProbablyHtml(str) {
+  const trimmed = (str || "").trim();
+  if (!trimmed) return false;
+  return /^<[a-z][\s\S]*>/i.test(trimmed);
+}
+
+let markedParserReady = false;
+let dompurifyHookReady = false;
+
+/** Configure marked.js once (GFM: tables, strikethrough, task lists). */
+function configureMarkedParser() {
+  if (markedParserReady || typeof marked === "undefined") return;
+  marked.setOptions({
+    gfm: true,
+    breaks: true,
+    headerIds: true,
+    mangle: false,
+  });
+  markedParserReady = true;
+}
+
+/** Harden external links after DOMPurify sanitization. */
+function setupDomPurifyHooks() {
+  if (dompurifyHookReady || typeof DOMPurify === "undefined") return;
+  DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+    if (node.tagName === "A" && node.getAttribute("href")) {
+      const href = node.getAttribute("href");
+      if (/^https?:\/\//i.test(href)) {
+        node.setAttribute("target", "_blank");
+        node.setAttribute("rel", "noopener noreferrer");
+      }
+    }
+  });
+  dompurifyHookReady = true;
+}
+
+/**
+ * Sanitize HTML before inserting into the DOM.
+ * @param {string} html
+ */
+function sanitizeBlogHtml(html) {
+  if (typeof DOMPurify === "undefined") {
+    console.warn("DOMPurify not loaded; blog HTML was not sanitized.");
+    return html;
+  }
+  setupDomPurifyHooks();
+  return DOMPurify.sanitize(html, {
+    USE_PROFILES: { html: true },
+    ADD_ATTR: ["target", "rel", "id"],
+  });
+}
+
+/**
+ * Convert Markdown (or legacy HTML) from Supabase into safe HTML.
+ * @param {string} raw
+ */
+function renderBlogContent(raw) {
+  if (!raw) return "";
+
+  configureMarkedParser();
+
+  let html;
+  if (isProbablyHtml(raw)) {
+    html = raw;
+  } else if (typeof marked !== "undefined") {
+    html = marked.parse(raw);
+  } else {
+    return `<p>${escapeHtml(raw)}</p>`;
+  }
+
+  return sanitizeBlogHtml(html);
+}
+
+/** Plain text for reading-time estimate (works with Markdown or HTML). */
+function getPlainTextFromContent(raw) {
+  if (!raw) return "";
+  if (isProbablyHtml(raw)) return raw.replace(/<[^>]+>/g, " ");
+  configureMarkedParser();
+  if (typeof marked !== "undefined") {
+    return marked.parse(raw).replace(/<[^>]+>/g, " ");
+  }
+  return raw;
+}
+
 /** Build tag chips markup. */
 function renderTagsHtml(tags, wrapperClass = "blog-card__tags") {
   const list = normalizeTags(tags);
@@ -227,9 +312,9 @@ function getSlugFromUrl() {
   return params.get("slug")?.trim() || "";
 }
 
-/** Estimate reading time from HTML content. */
-function estimateReadingTime(html) {
-  const text = (html || "").replace(/<[^>]+>/g, " ");
+/** Estimate reading time from Markdown or HTML content. */
+function estimateReadingTime(content) {
+  const text = getPlainTextFromContent(content);
   const words = text.trim().split(/\s+/).filter(Boolean).length;
   const minutes = Math.max(1, Math.ceil(words / 200));
   return `${minutes} min read`;
@@ -319,11 +404,16 @@ async function initBlogDetailPage() {
               </${TAG}>
             </${TAG}>
           </${TAG}>
-          <${TAG} class="blog-post-content" itemprop="articleBody">${data.content || ""}</${TAG}>
+          <${TAG} id="blogContent" class="blog-post-content markdown-body" itemprop="articleBody"></${TAG}>
           <a href="blogs.html" class="blog-back-link"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Blogs</a>
         </${TAG}>
       </article>
     `;
+
+    const contentEl = root.querySelector("#blogContent");
+    if (contentEl) {
+      contentEl.innerHTML = renderBlogContent(data.content);
+    }
 
     await loadRelatedPosts(slug, data.id);
   } catch (err) {
