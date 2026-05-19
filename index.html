@@ -15,7 +15,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body data-blog-page="preview">
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -41,7 +41,7 @@
                     <a href="#portfolio" class="nav-link">Work</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#blogs" class="nav-link">Blogs</a>
+                    <a href="blogs.html" class="nav-link">Blog</a>
                 </li>
                 <li class="nav-item">
                     <a href="#contact" class="nav-link">Contact</a>
@@ -250,32 +250,11 @@
     <section id="blogs" class="blogs">
         <div class="container">
             <h2 class="section-title">Latest Blogs</h2>
-            <div class="blogs-grid">
-                <div class="blog-card">
-                    <div class="blog-meta">
-                        <span class="blog-date">May 2024</span>
-                    </div>
-                    <h3 class="blog-title">Getting Started with ASP.NET Web API</h3>
-                    <p class="blog-desc">A beginner's guide to building robust RESTful APIs using ASP.NET Web API, including best practices and real-world examples.</p>
-                    <a href="blog.html" class="blog-link">Read More</a>
-                </div>
-                <div class="blog-card">
-                    <div class="blog-meta">
-                        <span class="blog-date">April 2024</span>
-                    </div>
-                    <h3 class="blog-title">Integrating WhatsApp with Your Website</h3>
-                    <p class="blog-desc">Learn how to connect your website to WhatsApp Business API for seamless customer communication and automation.</p>
-                    <a href="#" class="blog-link">Read More</a>
-                </div>
-                <div class="blog-card">
-                    <div class="blog-meta">
-                        <span class="blog-date">March 2024</span>
-                    </div>
-                    <h3 class="blog-title">Best Practices for SQL Server Database Design</h3>
-                    <p class="blog-desc">Tips and techniques for designing efficient, scalable, and secure databases with Microsoft SQL Server.</p>
-                    <a href="#" class="blog-link">Read More</a>
-                </div>
+            <div id="blogsGrid" class="blogs-grid" aria-live="polite" aria-busy="true">
             </div>
+            <p class="blogs-view-all">
+                <a href="blogs.html" class="btn btn-secondary">View All Posts</a>
+            </p>
         </div>
     </section>
 
@@ -342,6 +321,8 @@
     <!-- Floating dark mode toggle button -->
     <button id="darkModeToggleFloating" class="dark-mode-toggle-floating" aria-label="Toggle dark mode">🌙</button>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
     <script src="script.js"></script>
 </body>
 </html> 

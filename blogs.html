@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Read articles by Ibrahim Eltamawy on backend development and ASP.NET.">
+    <meta name="description" content="Articles and tutorials by Ibrahim Eltamawy on ASP.NET, backend development, databases, and web APIs.">
     <meta name="author" content="Ibrahim Eltamawy">
-    <title>Blog Post | Ibrahim Eltamawy</title>
+    <title>Blog | Ibrahim Eltamawy</title>
 
     <link rel="icon" type="image/png" sizes="32x32" href="imgs/logo-dark.png">
     <link rel="icon" type="image/png" sizes="16x16" href="imgs/logo-dark.png">
@@ -15,7 +15,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body data-blog-page="detail">
+<body data-blog-page="list">
     <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
             <div class="nav-logo">
@@ -40,9 +40,23 @@
         </div>
     </nav>
 
-    <main class="blog-detail-page">
-        <div id="blogPostRoot" class="blog-detail-root" aria-live="polite"></div>
-        <div id="relatedPosts" class="blog-related-root container" hidden></div>
+    <main class="blog-page">
+        <header class="blog-page__hero">
+            <div class="container">
+                <p class="blog-page__eyebrow">Insights &amp; Tutorials</p>
+                <h1 class="blog-page__title">Blog</h1>
+                <p class="blog-page__subtitle">
+                    Thoughts on backend development, ASP.NET, databases, and building reliable web applications.
+                </p>
+            </div>
+        </header>
+
+        <section class="blogs blog-page__list" aria-labelledby="blogs-heading">
+            <div class="container">
+                <h2 id="blogs-heading" class="visually-hidden">All blog posts</h2>
+                <div id="blogsGrid" class="blogs-grid" role="feed" aria-live="polite" aria-busy="true"></div>
+            </div>
+        </section>
     </main>
 
     <footer class="footer">
