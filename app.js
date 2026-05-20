@@ -82,16 +82,73 @@ function isProbablyHtml(str) {
 let markedParserReady = false;
 let dompurifyHookReady = false;
 
-/** Configure marked.js once (GFM: tables, strikethrough, task lists). */
+/** Configure marked.js once (GFM + Mermaid code blocks). */
 function configureMarkedParser() {
   if (markedParserReady || typeof marked === "undefined") return;
-  marked.setOptions({
+
+  marked.use({
     gfm: true,
     breaks: true,
-    headerIds: true,
-    mangle: false,
+    renderer: {
+      code({ text, lang }) {
+        if (lang === "mermaid") {
+          return `<pre class="mermaid bidi-isolate" dir="ltr">${text}</pre>`;
+        }
+        return false;
+      },
+    },
   });
+
   markedParserReady = true;
+}
+
+let mermaidInitialized = false;
+
+/** Initialize Mermaid once (respects dark mode). */
+function initMermaid() {
+  if (mermaidInitialized || typeof mermaid === "undefined") return;
+
+  const isDark = document.body.classList.contains("dark-mode");
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: isDark ? "dark" : "default",
+    securityLevel: "strict",
+    fontFamily: 'Inter, "IBM Plex Sans Arabic", "Noto Sans Arabic", sans-serif',
+  });
+  mermaidInitialized = true;
+}
+
+/** Normalize marked output and render Mermaid diagrams inside article content. */
+async function renderMermaidDiagrams(container) {
+  if (!container || typeof mermaid === "undefined") return;
+
+  container.querySelectorAll("pre > code.language-mermaid").forEach((code) => {
+    const parent = code.parentElement;
+    if (!parent) return;
+    const block = document.createElement("pre");
+    block.className = "mermaid bidi-isolate";
+    block.setAttribute("dir", "ltr");
+    block.textContent = code.textContent;
+    parent.replaceWith(block);
+  });
+
+  const nodes = container.querySelectorAll("pre.mermaid");
+  if (!nodes.length) return;
+
+  initMermaid();
+
+  try {
+    await mermaid.run({ nodes });
+  } catch (err) {
+    console.error("Mermaid render failed:", err);
+    nodes.forEach((node) => {
+      node.classList.add("mermaid--error");
+      node.insertAdjacentHTML(
+        "afterend",
+        `<p class="mermaid-error-msg" role="alert">تعذّر عرض المخطط.</p>`
+      );
+    });
+  }
 }
 
 /** Harden external links after DOMPurify sanitization. */
@@ -563,6 +620,7 @@ async function initBlogDetailPage() {
     const contentEl = root.querySelector("#blogContent");
     if (contentEl) {
       contentEl.innerHTML = renderBlogContent(data.content, locale);
+      await renderMermaidDiagrams(contentEl);
     }
 
     applyArticleLocale(root, locale);

@@ -1538,6 +1538,41 @@ section {
     display: inline-block;
 }
 
+/* Mermaid diagrams */
+.markdown-body pre.mermaid {
+    background: var(--color-section-bg);
+    border: 1px solid var(--color-input-border);
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    margin: 2rem auto;
+    overflow-x: auto;
+    direction: ltr;
+    text-align: center;
+    box-shadow: none;
+    color: inherit;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.markdown-body pre.mermaid svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+.markdown-body pre.mermaid.mermaid--error {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.mermaid-error-msg {
+    text-align: center;
+    color: #ef4444;
+    font-size: 0.95rem;
+    margin: -1rem 0 2rem;
+}
+
 .blog-post-container--rtl .blog-post-title {
     text-align: start;
 }
