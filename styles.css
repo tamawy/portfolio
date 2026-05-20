@@ -1076,6 +1076,67 @@ section {
     transform: translateX(4px);
 }
 
+/* Mixed Arabic + English on the same line (blog cards & titles) */
+.bidi-ltr,
+.bidi-isolate {
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+
+.bidi-ltr {
+    display: inline;
+}
+
+.blog-mixed-text {
+    text-align: start;
+    line-height: 1.75;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.blog-card--rtl,
+.blog-card--rtl .blog-card__body {
+    font-family: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+    direction: rtl;
+    text-align: start;
+}
+
+.blog-card--rtl .blog-title,
+.blog-card--rtl .blog-desc,
+.blog-card--rtl .blog-card__title-link {
+    direction: rtl;
+    text-align: start;
+    unicode-bidi: plaintext;
+}
+
+.blog-card--rtl .blog-card__tags {
+    direction: rtl;
+    justify-content: flex-start;
+}
+
+.blog-card--rtl .blog-tag {
+    direction: rtl;
+    unicode-bidi: isolate;
+}
+
+.blog-card--rtl .blog-tag .bidi-ltr {
+    direction: ltr;
+    unicode-bidi: isolate;
+}
+
+.blog-card--rtl .blog-card__read-more {
+    flex-direction: row-reverse;
+    align-self: flex-start;
+}
+
+.blog-card--rtl:hover .blog-card__read-more i {
+    transform: scaleX(-1) translateX(4px);
+}
+
+.blog-card--rtl .blog-card__read-more i {
+    transform: scaleX(-1);
+}
+
 .blog-date {
     color: var(--color-primary);
     font-weight: 500;
@@ -1197,6 +1258,14 @@ section {
 
 .blog-post-content-wrap {
     padding: 2rem 2.5rem 2.5rem;
+}
+
+.blog-post-content-wrap--article-only {
+    padding-top: 1.75rem;
+}
+
+.blog-post-content-wrap--article-only .blog-post-content.markdown-body {
+    margin-top: 0;
 }
 
 .blog-post-title {
@@ -1430,6 +1499,57 @@ section {
 
 .dark-mode .markdown-body tr:nth-child(even) td {
     background: rgba(255, 255, 255, 0.03);
+}
+
+/* Article page: RTL + mixed English terms */
+.blog-post-container--rtl,
+.blog-post-container--rtl .blog-post-title,
+.markdown-body[dir="rtl"] {
+    font-family: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+}
+
+.markdown-body[dir="rtl"] {
+    direction: rtl;
+    text-align: start;
+    line-height: 1.95;
+    unicode-bidi: plaintext;
+}
+
+.markdown-body[dir="rtl"] ul,
+.markdown-body[dir="rtl"] ol {
+    padding-inline-start: 1.75rem;
+    padding-inline-end: 0;
+}
+
+.markdown-body[dir="rtl"] blockquote {
+    border-left: none;
+    border-inline-end: 4px solid var(--color-primary);
+    border-radius: 8px 0 0 8px;
+}
+
+.markdown-body[dir="rtl"] code,
+.markdown-body[dir="rtl"] pre {
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: left;
+}
+
+.markdown-body[dir="rtl"] code {
+    display: inline-block;
+}
+
+.blog-post-container--rtl .blog-post-title {
+    text-align: start;
+}
+
+.blog-post-container--rtl .blog-author {
+    flex-direction: row-reverse;
+}
+
+.related-item[dir="rtl"] .related-link {
+    direction: rtl;
+    text-align: start;
+    font-family: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif;
 }
 
 .blog-back-link {

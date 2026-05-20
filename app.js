@@ -121,15 +121,167 @@ function sanitizeBlogHtml(html) {
   setupDomPurifyHooks();
   return DOMPurify.sanitize(html, {
     USE_PROFILES: { html: true },
-    ADD_ATTR: ["target", "rel", "id"],
+    ADD_ATTR: ["target", "rel", "id", "dir", "lang"],
+    ADD_TAGS: ["bdi"],
   });
+}
+
+/* ─── Arabic / English mixed text (same-line RTL + LTR) ─── */
+const ARABIC_CHAR_RE =
+  /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+const LTR_TERM_RE =
+  /(\.[A-Za-z][\w.]*)|([A-Za-z][\w.#+\-/]*(?:\s+(?:&|\+|\/)\s*|\s+)[A-Za-z][\w.#+\-/]*)|(\b[A-Z]{2,}\b)/g;
+
+const BIDI_SKIP_SELECTOR = "code, pre, script, style, bdi, .bidi-ltr";
+
+function containsArabic(text) {
+  return ARABIC_CHAR_RE.test(text || "");
+}
+
+/** @param {object} post */
+function resolveArticleLocale(post) {
+  const explicit = String(post?.lang || post?.language || post?.locale || "")
+    .toLowerCase()
+    .trim();
+
+  if (explicit === "ar" || explicit === "arabic" || explicit.startsWith("ar")) {
+    return { lang: "ar", dir: "rtl" };
+  }
+  if (explicit === "en" || explicit === "english" || explicit.startsWith("en")) {
+    return { lang: "en", dir: "ltr" };
+  }
+
+  const sample = `${post?.title || ""}\n${post?.excerpt || ""}\n${post?.content || ""}`;
+  if (containsArabic(sample)) {
+    return { lang: "ar", dir: "rtl" };
+  }
+  return { lang: "en", dir: "ltr" };
+}
+
+function shouldWrapLatinTerm(term) {
+  if (!term) return false;
+  if (term.startsWith(".")) return true;
+  if (/^[A-Z]{2,}$/.test(term)) return true;
+  return term.length >= 2;
+}
+
+/** Wrap English technical terms in <bdi> for correct order inside Arabic lines. */
+function wrapLatinTermsInText(text) {
+  LTR_TERM_RE.lastIndex = 0;
+  let result = "";
+  let lastIndex = 0;
+  let match;
+
+  while ((match = LTR_TERM_RE.exec(text)) !== null) {
+    const term = match[0];
+    result += escapeHtml(text.slice(lastIndex, match.index));
+    if (shouldWrapLatinTerm(term)) {
+      result += `<bdi dir="ltr" class="bidi-ltr" lang="en">${escapeHtml(term)}</bdi>`;
+    } else {
+      result += escapeHtml(term);
+    }
+    lastIndex = match.index + term.length;
+  }
+
+  result += escapeHtml(text.slice(lastIndex));
+  return result;
+}
+
+/**
+ * Safe HTML for plain text (title, excerpt, tags) with mixed AR/EN on one line.
+ * @param {string} text
+ * @param {{ lang: string, dir: string }} locale
+ */
+function formatMixedPlainText(text, locale) {
+  if (!text) return "";
+  if (locale?.dir === "rtl") {
+    return wrapLatinTermsInText(text);
+  }
+  return escapeHtml(text);
+}
+
+function enhanceBidiHtml(html, dir) {
+  if (!html || dir !== "rtl") return html;
+
+  const box = document.createElement("div");
+  box.innerHTML = html;
+
+  box.querySelectorAll("code").forEach((el) => {
+    if (!el.closest("pre")) {
+      el.setAttribute("dir", "ltr");
+      el.setAttribute("lang", "en");
+      el.classList.add("bidi-isolate");
+    }
+  });
+
+  box.querySelectorAll("pre").forEach((el) => {
+    el.setAttribute("dir", "ltr");
+    el.setAttribute("lang", "en");
+    el.classList.add("bidi-isolate");
+  });
+
+  box.querySelectorAll('a[href^="http"]').forEach((el) => {
+    el.setAttribute("dir", "ltr");
+    el.classList.add("bidi-isolate");
+  });
+
+  const textNodes = [];
+  const walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    textNodes.push(node);
+  }
+
+  for (const textNode of textNodes) {
+    const parent = textNode.parentElement;
+    if (!parent || parent.closest(BIDI_SKIP_SELECTOR)) continue;
+
+    const value = textNode.nodeValue;
+    if (!value || !/[A-Za-z]/.test(value)) continue;
+
+    LTR_TERM_RE.lastIndex = 0;
+    if (!LTR_TERM_RE.test(value)) continue;
+
+    const template = document.createElement("template");
+    template.innerHTML = wrapLatinTermsInText(value);
+    parent.replaceChild(template.content, textNode);
+  }
+
+  return box.innerHTML;
+}
+
+function applyArticleLocale(root, locale) {
+  const { lang, dir } = locale;
+
+  document.documentElement.lang = lang;
+  document.documentElement.dir = dir;
+
+  const article = root.querySelector(".blog-post-container");
+  const wrap = root.querySelector(".blog-post-content-wrap");
+  const content = root.querySelector("#blogContent");
+  const backLink = root.querySelector(".blog-back-link");
+
+  for (const el of [article, wrap, content]) {
+    if (!el) continue;
+    el.setAttribute("lang", lang);
+    el.setAttribute("dir", dir);
+  }
+
+  if (article) {
+    article.classList.toggle("blog-post-container--rtl", dir === "rtl");
+  }
+  if (backLink) {
+    backLink.classList.toggle("blog-back-link--rtl", dir === "rtl");
+  }
 }
 
 /**
  * Convert Markdown (or legacy HTML) from Supabase into safe HTML.
  * @param {string} raw
+ * @param {{ lang: string, dir: string }} [locale]
  */
-function renderBlogContent(raw) {
+function renderBlogContent(raw, locale) {
   if (!raw) return "";
 
   configureMarkedParser();
@@ -143,7 +295,11 @@ function renderBlogContent(raw) {
     return `<p>${escapeHtml(raw)}</p>`;
   }
 
-  return sanitizeBlogHtml(html);
+  html = sanitizeBlogHtml(html);
+  if (locale?.dir === "rtl") {
+    html = enhanceBidiHtml(html, "rtl");
+  }
+  return html;
 }
 
 /** Plain text for reading-time estimate (works with Markdown or HTML). */
@@ -158,15 +314,19 @@ function getPlainTextFromContent(raw) {
 }
 
 /** Build tag chips markup. */
-function renderTagsHtml(tags, wrapperClass = "blog-card__tags") {
+function renderTagsHtml(tags, wrapperClass = "blog-card__tags", locale) {
   const list = normalizeTags(tags);
   if (!list.length) return "";
 
   const chips = list
-    .map((tag) => `<span class="blog-tag">${escapeHtml(tag)}</span>`)
+    .map((tag) => {
+      const label = locale ? formatMixedPlainText(tag, locale) : escapeHtml(tag);
+      const dirAttr = locale?.dir === "rtl" ? ' dir="rtl"' : "";
+      return `<span class="blog-tag"${dirAttr}>${label}</span>`;
+    })
     .join("");
 
-  return `<${TAG} class="${wrapperClass}" aria-label="Tags">${chips}</${TAG}>`;
+  return `<${TAG} class="${wrapperClass}" aria-label="Tags" dir="${locale?.dir || "ltr"}">${chips}</${TAG}>`;
 }
 
 /** Default cover when none is set in the database. */
@@ -180,25 +340,30 @@ function createBlogCard(blog) {
   article.setAttribute("itemscope", "");
   article.setAttribute("itemtype", "https://schema.org/BlogPosting");
 
+  const locale = resolveArticleLocale(blog);
   const cover = blog.cover_image || DEFAULT_COVER_IMAGE;
   const slug = escapeHtml(blog.slug);
-  const title = escapeHtml(blog.title);
-  const excerpt = escapeHtml(blog.excerpt || "");
+  const title = formatMixedPlainText(blog.title, locale);
+  const excerpt = formatMixedPlainText(blog.excerpt || "", locale);
   const date = formatPublishDate(blog.created_at);
-  const tagsHtml = renderTagsHtml(blog.tags);
+  const tagsHtml = renderTagsHtml(blog.tags, "blog-card__tags", locale);
+
+  article.setAttribute("lang", locale.lang);
+  article.setAttribute("dir", locale.dir);
+  article.classList.toggle("blog-card--rtl", locale.dir === "rtl");
 
   article.innerHTML = `
     <a href="blog.html?slug=${slug}" class="blog-card__cover-link" tabindex="-1" aria-hidden="true">
       <img class="blog-card__cover" src="${escapeHtml(cover)}" alt="" loading="lazy" width="400" height="220" />
     </a>
-    <${TAG} class="blog-card__body">
+    <${TAG} class="blog-card__body" dir="${locale.dir}" lang="${locale.lang}">
       <${TAG} class="blog-meta">
         <time class="blog-date" datetime="${escapeHtml(blog.created_at || "")}" itemprop="datePublished">${escapeHtml(date)}</time>
       </${TAG}>
-      <h2 class="blog-title" itemprop="headline">
+      <h2 class="blog-title blog-mixed-text" itemprop="headline" dir="${locale.dir}">
         <a href="blog.html?slug=${slug}" class="blog-card__title-link">${title}</a>
       </h2>
-      <p class="blog-desc" itemprop="description">${excerpt}</p>
+      <p class="blog-desc blog-mixed-text" itemprop="description" dir="${locale.dir}">${excerpt}</p>
       ${tagsHtml}
       <a href="blog.html?slug=${slug}" class="blog-link blog-card__read-more">
         Read More <i class="fas fa-arrow-right" aria-hidden="true"></i>
@@ -313,10 +478,13 @@ function getSlugFromUrl() {
 }
 
 /** Estimate reading time from Markdown or HTML content. */
-function estimateReadingTime(content) {
+function estimateReadingTime(content, locale) {
   const text = getPlainTextFromContent(content);
   const words = text.trim().split(/\s+/).filter(Boolean).length;
   const minutes = Math.max(1, Math.ceil(words / 200));
+  if (locale?.lang === "ar") {
+    return minutes === 1 ? "دقيقة واحدة للقراءة" : `${minutes} دقائق للقراءة`;
+  }
   return `${minutes} min read`;
 }
 
@@ -375,36 +543,18 @@ async function initBlogDetailPage() {
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) metaDesc.setAttribute("content", data.excerpt || data.title);
 
+    const locale = resolveArticleLocale(data);
     const cover = data.cover_image || DEFAULT_COVER_IMAGE;
-    const date = formatPublishDate(data.created_at);
-    const readTime = estimateReadingTime(data.content);
-    const tagsHtml = renderTagsHtml(data.tags, "blog-tags");
-
     root.removeAttribute("aria-busy");
+    const titleHtml = formatMixedPlainText(data.title, locale);
+
     root.innerHTML = `
-      <article class="blog-post-container" itemscope itemtype="https://schema.org/BlogPosting">
+      <article class="blog-post-container blog-article-layout" itemscope itemtype="https://schema.org/BlogPosting">
         <img class="blog-featured-image" src="${escapeHtml(cover)}" alt="${escapeHtml(data.title)}" itemprop="image" />
-        <${TAG} class="blog-post-content-wrap">
-          ${tagsHtml}
-          <h1 class="blog-post-title" itemprop="headline">${escapeHtml(data.title)}</h1>
-          <${TAG} class="blog-post-meta">
-            <time datetime="${escapeHtml(data.created_at || "")}" itemprop="datePublished">${escapeHtml(date)}</time>
-            <span aria-hidden="true"> &bull; </span>
-            <span>${escapeHtml(readTime)}</span>
-          </${TAG}>
-          <${TAG} class="blog-author">
-            <img src="imgs/my-profile-picture.jpg" alt="Ibrahim Eltamawy" class="blog-author-img" width="56" height="56" />
-            <${TAG} class="blog-author-info">
-              <span class="blog-author-name" itemprop="author">Ibrahim Eltamawy</span>
-              <span class="blog-author-role">Back-End Developer &amp; Instructor</span>
-              <${TAG} class="blog-author-socials">
-                <a href="mailto:tamawy.ibrahim@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
-                <a href="https://www.linkedin.com/in/ibrahim-tamawy/" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/tamawy" target="_blank" rel="noopener noreferrer" title="GitHub"><i class="fab fa-github"></i></a>
-              </${TAG}>
-            </${TAG}>
-          </${TAG}>
-          <${TAG} id="blogContent" class="blog-post-content markdown-body" itemprop="articleBody"></${TAG}>
+        <${TAG} class="blog-post-content-wrap blog-post-content-wrap--article-only">
+          <h1 class="visually-hidden blog-post-title" itemprop="headline" dir="${locale.dir}">${titleHtml}</h1>
+          <meta itemprop="datePublished" content="${escapeHtml(data.created_at || "")}">
+          <${TAG} id="blogContent" class="blog-post-content markdown-body" itemprop="articleBody" dir="${locale.dir}" lang="${locale.lang}"></${TAG}>
           <a href="blogs.html" class="blog-back-link"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Blogs</a>
         </${TAG}>
       </article>
@@ -412,8 +562,10 @@ async function initBlogDetailPage() {
 
     const contentEl = root.querySelector("#blogContent");
     if (contentEl) {
-      contentEl.innerHTML = renderBlogContent(data.content);
+      contentEl.innerHTML = renderBlogContent(data.content, locale);
     }
+
+    applyArticleLocale(root, locale);
 
     await loadRelatedPosts(slug, data.id);
   } catch (err) {
@@ -450,14 +602,15 @@ async function loadRelatedPosts(currentSlug, currentId) {
         <h2 class="related-title">Related Posts</h2>
         <${TAG} class="related-list">
           ${related
-            .map(
-              (post) => `
-            <${TAG} class="related-item">
+            .map((post) => {
+              const postLocale = resolveArticleLocale(post);
+              const titleHtml = formatMixedPlainText(post.title, postLocale);
+              return `
+            <${TAG} class="related-item" dir="${postLocale.dir}">
               <img src="${escapeHtml(post.cover_image || DEFAULT_COVER_IMAGE)}" alt="" class="related-thumb" loading="lazy" width="48" height="48" />
-              <a href="blog.html?slug=${escapeHtml(post.slug)}" class="related-link">${escapeHtml(post.title)}</a>
-            </${TAG}>
-          `
-            )
+              <a href="blog.html?slug=${escapeHtml(post.slug)}" class="related-link blog-mixed-text" dir="${postLocale.dir}" lang="${postLocale.lang}">${titleHtml}</a>
+            </${TAG}>`;
+            })
             .join("")}
         </${TAG}>
       </${TAG}>
