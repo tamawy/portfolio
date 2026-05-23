@@ -18,46 +18,46 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Dynamic Years of Experience Calculator
-function updateExperienceYears() {
-    // Set your career start date (adjust this to your actual start date)
-    const startDate = new Date('2022-06-01'); // Change this to your actual start date
-    const currentDate = new Date();
+// function updateExperienceYears() {
+//     // Set your career start date (adjust this to your actual start date)
+//     const startDate = new Date('2022-06-01'); // Change this to your actual start date
+//     const currentDate = new Date();
     
-    // Calculate years of experience
-    const yearsDiff = currentDate.getFullYear() - startDate.getFullYear();
-    const monthsDiff = currentDate.getMonth() - startDate.getMonth();
-    let yearsOfExperience = yearsDiff;
-    if (monthsDiff < 0 || (monthsDiff === 0 && currentDate.getDate() < startDate.getDate())) {
-        yearsOfExperience = yearsDiff - 1;
-    }
-    if (monthsDiff > 0) {
-        const decimalPart = monthsDiff / 12;
-        yearsOfExperience = yearsDiff + decimalPart;
-    }
-    // --- Custom rounding to nearest 0.5 ---
-    yearsOfExperience = Math.round(yearsOfExperience * 2) / 2;
-    // Format the experience text
-    let experienceText;
-    if (yearsOfExperience < 1) {
-        experienceText = `0.5 years`;
-    } else if (yearsOfExperience === Math.floor(yearsOfExperience)) {
-        experienceText = `${yearsOfExperience} years`;
-    } else {
-        experienceText = `${yearsOfExperience} years`;
-    }
-    // Update all instances of experience text
-    const experienceElements = document.querySelectorAll('.hero-description, .about-text p');
-    experienceElements.forEach(element => {
-        if (element.textContent.includes('years of experience')) {
-            element.innerHTML = element.innerHTML.replace(/\d+(\.\d+)?\s*years?\s*of\s*experience/g, `${experienceText} of experience`);
-        }
-    });
-    // Update the stats section if it exists
-    const statsElement = document.querySelector('.stat-item h3');
-    if (statsElement) {
-        statsElement.textContent = yearsOfExperience;
-    }
-}
+//     // Calculate years of experience
+//     const yearsDiff = currentDate.getFullYear() - startDate.getFullYear();
+//     const monthsDiff = currentDate.getMonth() - startDate.getMonth();
+//     let yearsOfExperience = yearsDiff;
+//     if (monthsDiff < 0 || (monthsDiff === 0 && currentDate.getDate() < startDate.getDate())) {
+//         yearsOfExperience = yearsDiff - 1;
+//     }
+//     if (monthsDiff > 0) {
+//         const decimalPart = monthsDiff / 12;
+//         yearsOfExperience = yearsDiff + decimalPart;
+//     }
+//     // --- Custom rounding to nearest 0.5 ---
+//     yearsOfExperience = Math.round(yearsOfExperience * 2) / 2;
+//     // Format the experience text
+//     let experienceText;
+//     if (yearsOfExperience < 1) {
+//         experienceText = `0.5 years`;
+//     } else if (yearsOfExperience === Math.floor(yearsOfExperience)) {
+//         experienceText = `${yearsOfExperience} years`;
+//     } else {
+//         experienceText = `${yearsOfExperience} years`;
+//     }
+//     // Update all instances of experience text
+//     const experienceElements = document.querySelectorAll('.hero-description, .about-text p');
+//     experienceElements.forEach(element => {
+//         if (element.textContent.includes('years of experience')) {
+//             element.innerHTML = element.innerHTML.replace(/\d+(\.\d+)?\s*years?\s*of\s*experience/g, `${experienceText} of experience`);
+//         }
+//     });
+//     // Update the stats section if it exists
+//     const statsElement = document.querySelector('.stat-item h3');
+//     if (statsElement) {
+//         statsElement.textContent = yearsOfExperience;
+//     }
+// }
 
 // Navbar background change on scroll
 window.addEventListener('scroll', () => {
