@@ -135,6 +135,9 @@ body {
     display: none;
     flex-direction: column;
     cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
 }
 
 .bar {
@@ -143,6 +146,10 @@ body {
     background-color: var(--color-text);
     margin: 3px 0;
     transition: 0.3s;
+}
+
+.dark-mode .bar {
+    background-color: #60a5fa;
 }
 
 .nav-socials {
@@ -687,7 +694,7 @@ section {
         left: -100%;
         top: 70px;
         flex-direction: column;
-        background-color: white;
+        background-color: var(--color-bg);
         width: 100%;
         text-align: center;
         transition: 0.3s;
@@ -697,6 +704,23 @@ section {
 
     .nav-menu.active {
         left: 0;
+    }
+
+    .dark-mode .nav-menu {
+        background-color: var(--color-bg);
+        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.3);
+    }
+
+    .hamburger.active .bar:nth-child(1) {
+        transform: rotate(-45deg) translate(-8px, 8px);
+    }
+
+    .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active .bar:nth-child(3) {
+        transform: rotate(45deg) translate(-8px, -8px);
     }
 
     .logo-img {
